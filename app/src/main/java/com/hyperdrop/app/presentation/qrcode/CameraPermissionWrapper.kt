@@ -1,7 +1,11 @@
 package com.hyperdrop.app.presentation.qrcode
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 @Composable
@@ -32,6 +37,8 @@ fun CameraPermissionWrapper(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val activity = context as? Activity
+    
     var hasPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -79,8 +86,22 @@ fun CameraPermissionWrapper(
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
-                Text("Grant Permission")
+            
+            val isPermanentlyDenied = activity != null && 
+                !ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA) && 
+                permissionRequested
+
+            Button(onClick = { 
+                if (isPermanentlyDenied) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                } else {
+                    launcher.launch(Manifest.permission.CAMERA)
+                }
+            }) {
+                Text(if (isPermanentlyDenied) "Open Settings" else "Grant Permission")
             }
         }
     }
