@@ -59,6 +59,6 @@ SolidLink (HyperDrop) is a high-speed peer-to-peer file transfer system engineer
 4. Click **Toggle Device Toolbar** (`Ctrl + Shift + M`) and choose a device (e.g., *iPhone 14* / *Pixel 7*) to test the responsive mobile view.
 
 ---
-
+   
 ## 📄 License
 Distributed under the MIT License. See `LICENSE` for details.
