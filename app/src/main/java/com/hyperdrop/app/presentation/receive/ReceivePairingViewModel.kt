@@ -221,6 +221,7 @@ class ReceivePairingViewModel @Inject constructor(
     /** Retry after error. */
     fun retry() {
         _state.value = ReceivePairingState.Scanning
+        startDiscovery()
     }
 
     override fun onCleared() {
